@@ -6,64 +6,61 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
+import com.example.josh.ui.components.AppHeader
+import com.example.josh.ui.components.PrimaryButton
 import kotlinx.coroutines.delay
 
 @Composable
 fun NoiseTestScreen(navController: NavHostController) {
 
     var decibel by remember { mutableStateOf(0) }
-    var status by remember { mutableStateOf("") }
-    var testRunning by remember { mutableStateOf(false) }
+    var message by remember { mutableStateOf("") }
+    var running by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Scaffold(
+        topBar = { AppHeader("Noise Test", onBack = { navController.popBackStack() }) }
+    ) { padding ->
 
-        Text("Noise Test", fontSize = 24.sp)
-
-        Spacer(Modifier.height(20.dp))
-
-        Text("Current Noise Level: $decibel dB", fontSize = 20.sp)
-
-        Spacer(Modifier.height(30.dp))
-
-        Button(
-            onClick = {
-                testRunning = true
-            },
-            enabled = !testRunning
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Start Test")
-        }
 
-        Spacer(Modifier.height(20.dp))
+            Text("Current Noise Level", fontSize = 16.sp)
+            Text("$decibel dB", fontSize = 32.sp, color = Color(0xFF0A74FF))
 
-        Text(status, fontSize = 18.sp)
+            Spacer(Modifier.height(24.dp))
 
-        LaunchedEffect(testRunning) {
-            if (testRunning) {
-                repeat(20) {
-                    decibel = (20..60).random()
-                    delay(150)
+            PrimaryButton(text = "Start Test", enabled = !running) {
+                running = true
+            }
+
+            Spacer(Modifier.height(20.dp))
+            Text(message)
+
+            LaunchedEffect(running) {
+                if (running) {
+                    repeat(25) {
+                        decibel = (25..63).random()
+                        delay(120)
+                    }
+                    if (decibel < 40) {
+                        message = "Good to proceed!"
+                        delay(800)
+                        navController.navigate(AppScreen.TaskSelection.route)
+                    } else {
+                        message = "Try moving to a quieter place"
+                    }
+                    running = false
                 }
-
-                if (decibel < 40) {
-                    status = "Good to proceed"
-                    delay(1000)
-                    navController.navigate(AppScreen.TaskSelection.route)
-                } else {
-                    status = "Please move to a quieter place"
-                }
-
-                testRunning = false
             }
         }
     }

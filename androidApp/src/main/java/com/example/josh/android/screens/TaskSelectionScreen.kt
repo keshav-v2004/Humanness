@@ -1,39 +1,56 @@
 package com.example.josh.android.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
+import com.example.josh.ui.components.AppHeader
+import com.example.josh.ui.components.TaskOptionCard
 
 @Composable
 fun TaskSelectionScreen(navController: NavHostController) {
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center
-    ) {
-        Button(
-            onClick = { navController.navigate(AppScreen.TextReading.route) },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("Text Reading Task") }
+    Scaffold(
+        topBar = { AppHeader("Choose a Task") }
+    ) { padding ->
 
-        Spacer(Modifier.height(16.dp))
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
 
-        Button(
-            onClick = { navController.navigate(AppScreen.ImageDescription.route) },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("Image Description Task") }
+            TaskOptionCard(
+                title = "Text Reading Task",
+                description = "Read aloud a given passage",
+                icon = Icons.Default.Email,
+                onClick = { navController.navigate(AppScreen.TextReading.route) }
+            )
 
-        Spacer(Modifier.height(16.dp))
+            TaskOptionCard(
+                title = "Image Description Task",
+                description = "Describe what you see in an image",
+                icon = Icons.Default.Face,
+                onClick = { navController.navigate(AppScreen.ImageDescription.route) }
+            )
 
-        Button(
-            onClick = { navController.navigate(AppScreen.PhotoCapture.route) },
-            modifier = Modifier.fillMaxWidth()
-        ) { Text("Photo Capture Task") }
+            TaskOptionCard(
+                title = "Photo Capture Task",
+                description = "Capture a photo and describe it",
+                icon = Icons.Default.PlayArrow,
+                onClick = { navController.navigate(AppScreen.PhotoCapture.route) }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+        }
     }
 }

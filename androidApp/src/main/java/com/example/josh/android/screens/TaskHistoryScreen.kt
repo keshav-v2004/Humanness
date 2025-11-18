@@ -1,94 +1,140 @@
 package com.example.josh.android.screens
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.rememberImagePainter
 import com.example.josh.android.storage.TaskStorageAndroid
-import android.graphics.BitmapFactory
+import com.example.josh.ui.components.AppHeader
+import com.example.josh.ui.components.RoundedImageBox
 import model.TaskItem
+import java.util.Date
+
 
 @Composable
 fun TaskHistoryScreen(navController: NavHostController) {
 
     val context = LocalContext.current
     val storage = remember { TaskStorageAndroid(context) }
-
     val tasks = storage.getTasks()
+
     val totalDuration = tasks.sumOf { it.durationSec }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Scaffold(
+        topBar = { AppHeader("Task History", onBack = { navController.popBackStack() }) }
+    ) { padding ->
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(20.dp)
+                .fillMaxSize()
         ) {
-            Text("Total Tasks: ${tasks.size}")
-            Text("Total Duration: ${totalDuration}s")
-        }
 
-        Spacer(Modifier.height(16.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                StatCard("Total Tasks", tasks.size.toString())
+                StatCard("Duration Recorded", formatDuration(totalDuration))
+            }
 
-        LazyColumn {
-            items(tasks) { task ->
-                TaskItemPreview(task)
-                Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(20.dp))
+
+            Text("Tasks", fontSize = 18.sp)
+
+            Spacer(Modifier.height(12.dp))
+
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(tasks) { task ->
+                    TaskHistoryCard(task)
+                }
             }
         }
     }
 }
 
 @Composable
-fun TaskItemPreview(task: TaskItem) {
+fun StatCard(title: String, value: String) {
+    Card(
+        modifier = Modifier
+            .height(90.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(title, fontSize = 14.sp, color = Color.Gray)
+            Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        }
+    }
+}
+
+@Composable
+fun TaskHistoryCard(task: TaskItem) {
 
     Card(
-        Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
+        Column(Modifier.padding(16.dp)) {
 
-        Column(Modifier.padding(12.dp)) {
+            Text("Task - ${task.id}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
 
-            Text("Task ID: ${task.id}")
-            Text("Type: ${task.taskType}")
-            Text("Duration: ${task.durationSec}s")
-            Text("Timestamp: ${task.timestamp}")
+            Spacer(Modifier.height(4.dp))
 
-            Spacer(Modifier.height(8.dp))
+            Text("Duration: ${task.durationSec}s", fontSize = 14.sp, color = Color.Gray)
 
-            // Show text or image based on task
-            task.text?.let { Text(it.take(60)) }
+            val date = Date(task.timestamp.toLong()).toString().substring(0, 16)
+            Text(date, fontSize = 13.sp, color = Color.Gray)
+
+            Spacer(Modifier.height(12.dp))
+
+            if (task.text != null) {
+                Text(task.text!!.take(60), fontSize = 14.sp)
+            }
 
             if (task.imageUrl != null) {
-                Image(
-                    painter = rememberImagePainter(task.imageUrl),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                )
+                RoundedImageBox(task.imageUrl!!)
             }
 
             if (task.imagePath != null) {
                 val bitmap = BitmapFactory.decodeFile(task.imagePath)
                 bitmap?.let {
-                    Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
+                    Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
-                    )
+                            .height(150.dp),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = null
+                        )
+                    }
                 }
             }
         }
     }
+}
+
+fun formatDuration(sec: Int): String {
+    val min = sec / 60
+    val s = sec % 60
+    return "${min}m ${s}s"
 }

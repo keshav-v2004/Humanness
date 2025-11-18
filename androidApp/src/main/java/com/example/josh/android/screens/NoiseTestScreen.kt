@@ -12,6 +12,8 @@ import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
 import com.example.josh.android.ui.components.AppHeader
 import com.example.josh.android.ui.components.PrimaryButton
+import com.example.josh.android.permissions.RequirePermissions
+import android.Manifest
 import kotlinx.coroutines.delay
 
 @Composable
@@ -24,7 +26,10 @@ fun NoiseTestScreen(navController: NavHostController) {
     Scaffold(
         topBar = { AppHeader("Noise Test", onBack = { navController.popBackStack() }) }
     ) { padding ->
-
+        RequirePermissions(
+            permissions = listOf(Manifest.permission.RECORD_AUDIO),
+            rationale = "Microphone permission is required to measure ambient noise."
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,6 +66,7 @@ fun NoiseTestScreen(navController: NavHostController) {
                     running = false
                 }
             }
+        }
         }
     }
 }

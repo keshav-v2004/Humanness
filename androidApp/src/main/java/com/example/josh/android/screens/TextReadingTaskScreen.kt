@@ -1,6 +1,7 @@
 package com.example.josh.android.screens
 
 import androidx.compose.foundation.layout.Column
+import com.example.josh.android.permissions.RequirePermissions
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,6 +34,7 @@ import com.example.josh.android.ui.components.PressHoldRecordButton
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import android.Manifest
 import org.json.JSONObject
 import java.net.URL
 import model.TaskItem
@@ -74,6 +76,10 @@ fun TextReadingTaskScreen(navController: NavHostController) {
         topBar = { AppHeader("Recording Tasks", onBack = { navController.popBackStack() }) }
     ) { padding ->
 
+        RequirePermissions(
+            permissions = listOf(Manifest.permission.RECORD_AUDIO),
+            rationale = "Microphone permission is required to record your reading."
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -165,6 +171,7 @@ fun TextReadingTaskScreen(navController: NavHostController) {
                 storage.saveTask(t)
                 navController.popBackStack()
             }
+        }
         }
     }
 }

@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
 import com.example.josh.android.recorder.AudioRecorder
+import com.example.josh.android.permissions.RequirePermissions
+import android.Manifest
 import com.example.josh.android.storage.TaskStorageAndroid
 import com.example.josh.android.ui.components.AppHeader
 import com.example.josh.android.ui.components.AudioPlayerCard
@@ -58,7 +60,10 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
     Scaffold(
         topBar = { AppHeader("Recording Tasks", onBack = { navController.popBackStack() }) }
     ) { padding ->
-
+        RequirePermissions(
+            permissions = listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+            rationale = "Camera and microphone permissions are needed to capture a photo and record description."
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -175,6 +180,6 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
                 storage.saveTask(task)
                 navController.navigate(AppScreen.TaskSelection.route)
             }
-        }
+        }}
     }
 }

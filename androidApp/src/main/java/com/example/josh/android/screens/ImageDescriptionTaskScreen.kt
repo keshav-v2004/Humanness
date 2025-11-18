@@ -1,6 +1,7 @@
 package com.example.josh.android.screens
 
 import androidx.compose.foundation.layout.Column
+import com.example.josh.android.permissions.RequirePermissions
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -10,6 +11,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import android.Manifest
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,10 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
         topBar = { AppHeader(title = "Recording Task", onBack = { navController.popBackStack() }) }
     ) { padding ->
 
+        RequirePermissions(
+            permissions = listOf(Manifest.permission.RECORD_AUDIO),
+            rationale = "Microphone permission is required to record your description."
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,6 +91,7 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
                     else if (duration > 20) error = "Recording too long (max 20 s)."
                 }
             )
+                        }
 
             LaunchedEffect(isRecording) {
                 if (isRecording) {

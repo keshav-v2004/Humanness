@@ -1,47 +1,31 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
+    kotlin("plugin.serialization") version "2.0.0"
+
+    // Optional: shared UI via Compose MPP
     id("org.jetbrains.compose")
+    // Required with Kotlin 2.0 for Compose Multiplatform
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 kotlin {
     androidTarget()
-    jvm("desktop") // optional
+    // Removed unused desktop target to align with available actuals
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-
-                // Serialization
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
-
-                // Settings (local storage)
                 implementation("com.russhwolf:multiplatform-settings:1.1.1")
+
+                // Compose MPP optional
+                implementation(compose.runtime)
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation("androidx.core:core-ktx:1.13.0")
-                implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
-
-                // Activity for Compose
-                implementation("androidx.activity:activity-compose:1.9.0")
-
-                // Permissions
-                implementation("com.google.accompanist:accompanist-permissions:0.32.0")
-
-                // CameraX
-                val cameraxVersion = "1.3.3"
-                implementation("androidx.camera:camera-core:$cameraxVersion")
-                implementation("androidx.camera:camera-camera2:$cameraxVersion")
-                implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
-                implementation("androidx.camera:camera-view:1.3.3")
-
-                // Audio Recording (MediaRecorder)
-                implementation("androidx.media:media:1.7.0")
             }
         }
     }
@@ -53,5 +37,10 @@ android {
 
     defaultConfig {
         minSdk = 24
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }

@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
-import com.example.josh.ui.components.PrimaryButton
+import com.example.josh.android.ui.components.PrimaryButton
 
 @Composable
 fun StartScreen(navController: NavHostController) {
@@ -28,7 +28,7 @@ fun StartScreen(navController: NavHostController) {
         ) {
 
             Text(
-                text = "Let's begin with a sample task.",
+                text = "Let's start with a Sample Task for practice.",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -37,7 +37,7 @@ fun StartScreen(navController: NavHostController) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Pehle ek practice task complete karte hain.",
+                text = "Pehele hum ek sample task karte hain.",
                 fontSize = 16.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center

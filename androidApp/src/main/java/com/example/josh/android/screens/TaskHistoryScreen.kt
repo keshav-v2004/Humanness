@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.josh.android.storage.TaskStorageAndroid
-import com.example.josh.ui.components.AppHeader
-import com.example.josh.ui.components.RoundedImageBox
+import com.example.josh.android.ui.components.AppHeader
+import com.example.josh.android.ui.components.RoundedImageBox
 import model.TaskItem
 import java.util.Date
 
@@ -95,6 +95,7 @@ fun TaskHistoryCard(task: TaskItem) {
         Column(Modifier.padding(16.dp)) {
 
             Text("Task - ${task.id}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(task.taskType, fontSize = 13.sp, color = Color.Gray)
 
             Spacer(Modifier.height(4.dp))
 

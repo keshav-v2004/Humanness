@@ -1,6 +1,6 @@
 package com.example.josh.android.navigation
 
-import ImageDescriptionTaskScreen
+import com.example.josh.android.screens.ImageDescriptionTaskScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost

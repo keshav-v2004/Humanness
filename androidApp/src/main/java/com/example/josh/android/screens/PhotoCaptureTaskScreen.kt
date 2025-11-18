@@ -20,11 +20,12 @@ import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
 import com.example.josh.android.recorder.AudioRecorder
 import com.example.josh.android.storage.TaskStorageAndroid
-import com.example.josh.ui.components.AppHeader
-import com.example.josh.ui.components.AudioPlayerCard
-import com.example.josh.ui.components.InstructionText
-import com.example.josh.ui.components.PrimaryButton
-import com.example.josh.ui.components.SecondaryButton
+import com.example.josh.android.ui.components.AppHeader
+import com.example.josh.android.ui.components.AudioPlayerCard
+import com.example.josh.android.ui.components.InstructionText
+import com.example.josh.android.ui.components.PrimaryButton
+import com.example.josh.android.ui.components.SecondaryButton
+import com.example.josh.android.ui.components.PressHoldRecordButton
 import kotlinx.coroutines.delay
 import model.TaskItem
 import java.io.File
@@ -43,6 +44,7 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
     var duration by remember { mutableStateOf(0) }
     var error by remember { mutableStateOf("") }
     var recorder: AudioRecorder? by remember { mutableStateOf(null) }
+    var recordedFile: File? by remember { mutableStateOf(null) }
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -71,6 +73,13 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
             SecondaryButton("Capture Image") {
                 val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
                 cameraLauncher.launch(intent)
+            }
+
+            if (bitmap != null) {
+                Spacer(Modifier.height(8.dp))
+                SecondaryButton("Retake Photo") {
+                    bitmap = null
+                }
             }
 
             Spacer(Modifier.height(20.dp))
@@ -102,18 +111,25 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(20.dp))
 
-            SecondaryButton(
-                text = if (isRecording) "Stop Recording" else "Record Description",
-            ) {
-                if (!isRecording) {
-                    val f = File(context.filesDir, "photo_desc_${System.currentTimeMillis()}.m4a")
-                    recorder = AudioRecorder(f)
+            PressHoldRecordButton(
+                isRecording = isRecording,
+                onStart = {
+                    error = ""
+                    recordedFile = File(context.filesDir, "photo_desc_${System.currentTimeMillis()}.m4a")
+                    recorder = AudioRecorder(recordedFile!!)
                     recorder!!.startRecording()
                     duration = 0
-                } else recorder?.stopRecording()
-
-                isRecording = !isRecording
-            }
+                    isRecording = true
+                },
+                onStop = {
+                    recorder?.stopRecording()
+                    isRecording = false
+                    if (duration < 10) error = "Recording too short (min 10 s)."
+                    else if (duration > 20) error = "Recording too long (max 20 s)."
+                },
+                labelIdle = "Press & Hold to Record (Optional)",
+                labelRecording = "Recording..."
+            )
 
             // Timer logic
             LaunchedEffect(isRecording) {
@@ -125,7 +141,7 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
                 }
             }
 
-            if (duration > 0 && !isRecording) {
+            if (duration > 0 && !isRecording && error.isEmpty()) {
                 Spacer(Modifier.height(14.dp))
                 Text("Submitted Recording", fontSize = 14.sp)
                 Spacer(Modifier.height(8.dp))
@@ -140,7 +156,7 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
 
             PrimaryButton(
                 text = "Submit",
-                enabled = bitmap != null && description.isNotBlank()
+                enabled = bitmap != null && description.isNotBlank() && (recordedFile == null || (error.isEmpty() && duration in 10..20))
             ) {
                 val imgFile = File(context.filesDir, "photo_${System.currentTimeMillis()}.jpg")
                 FileOutputStream(imgFile).use {
@@ -152,7 +168,7 @@ fun PhotoCaptureTaskScreen(navController: NavHostController) {
                     taskType = "photo_capture",
                     imagePath = imgFile.absolutePath,
                     text = description,
-                    audioPath = "",
+                    audioPath = recordedFile?.absolutePath ?: "",
                     durationSec = duration,
                     timestamp = System.currentTimeMillis().toString()
                 )

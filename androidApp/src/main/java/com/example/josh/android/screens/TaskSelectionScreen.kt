@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
-import com.example.josh.ui.components.AppHeader
-import com.example.josh.ui.components.TaskOptionCard
+import com.example.josh.android.ui.components.AppHeader
+import com.example.josh.android.ui.components.TaskOptionCard
 
 @Composable
 fun TaskSelectionScreen(navController: NavHostController) {
@@ -51,6 +51,13 @@ fun TaskSelectionScreen(navController: NavHostController) {
             )
 
             Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+                onClick = { navController.navigate(AppScreen.TaskHistory.route) },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("View Task History")
+            }
         }
     }
 }

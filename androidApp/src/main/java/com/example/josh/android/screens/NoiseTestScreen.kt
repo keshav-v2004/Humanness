@@ -1,6 +1,5 @@
 package com.example.josh.android.screens
 
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -11,8 +10,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.josh.android.navigation.AppScreen
-import com.example.josh.ui.components.AppHeader
-import com.example.josh.ui.components.PrimaryButton
+import com.example.josh.android.ui.components.AppHeader
+import com.example.josh.android.ui.components.PrimaryButton
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,11 +52,11 @@ fun NoiseTestScreen(navController: NavHostController) {
                         delay(120)
                     }
                     if (decibel < 40) {
-                        message = "Good to proceed!"
+                        message = "Good to proceed"
                         delay(800)
                         navController.navigate(AppScreen.TaskSelection.route)
                     } else {
-                        message = "Try moving to a quieter place"
+                        message = "Please move to a quieter place"
                     }
                     running = false
                 }

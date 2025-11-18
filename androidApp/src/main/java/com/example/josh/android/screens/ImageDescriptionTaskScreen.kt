@@ -1,3 +1,5 @@
+package com.example.josh.android.screens
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,16 +19,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.josh.android.navigation.AppScreen
 import com.example.josh.android.recorder.AudioRecorder
 import com.example.josh.android.storage.TaskStorageAndroid
-import com.example.josh.ui.components.AppHeader
-import com.example.josh.ui.components.AudioPlayerCard
-import com.example.josh.ui.components.InstructionText
-import com.example.josh.ui.components.PrimaryButton
-import com.example.josh.ui.components.RoundedImageBox
-import com.example.josh.ui.components.SecondaryButton
+import com.example.josh.android.ui.components.AppHeader
+import com.example.josh.android.ui.components.AudioPlayerCard
+import com.example.josh.android.ui.components.InstructionText
+import com.example.josh.android.ui.components.PrimaryButton
+import com.example.josh.android.ui.components.RoundedImageBox
+import com.example.josh.android.ui.components.PressHoldRecordButton
 import kotlinx.coroutines.delay
 import model.TaskItem
 import java.io.File
@@ -42,6 +43,7 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
     var duration by remember { mutableStateOf(0) }
     var error by remember { mutableStateOf("") }
     var recorder: AudioRecorder? by remember { mutableStateOf(null) }
+    var recordedFile: File? by remember { mutableStateOf(null) }
 
     Scaffold(
         topBar = { AppHeader(title = "Recording Task", onBack = { navController.popBackStack() }) }
@@ -62,23 +64,27 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
 
             Spacer(Modifier.height(24.dp))
 
-            Text("Press and hold to record", fontSize = 14.sp)
+            Text("Press & hold to record", fontSize = 14.sp)
 
             Spacer(Modifier.height(12.dp))
 
-            SecondaryButton(
-                text = if (isRecording) "Stop Recording" else "Start Recording"
-            ) {
-                if (!isRecording) {
-                    val file = File(context.filesDir, "img_desc_${System.currentTimeMillis()}.m4a")
-                    recorder = AudioRecorder(file)
+            PressHoldRecordButton(
+                isRecording = isRecording,
+                onStart = {
+                    error = ""
+                    recordedFile = File(context.filesDir, "img_desc_${System.currentTimeMillis()}.m4a")
+                    recorder = AudioRecorder(recordedFile!!)
                     recorder!!.startRecording()
                     duration = 0
-                } else {
+                    isRecording = true
+                },
+                onStop = {
                     recorder?.stopRecording()
+                    isRecording = false
+                    if (duration < 10) error = "Recording too short (min 10 s)."
+                    else if (duration > 20) error = "Recording too long (max 20 s)."
                 }
-                isRecording = !isRecording
-            }
+            )
 
             LaunchedEffect(isRecording) {
                 if (isRecording) {
@@ -89,7 +95,7 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
                 }
             }
 
-            if (duration > 0 && !isRecording) {
+            if (duration > 0 && !isRecording && error.isEmpty()) {
                 Spacer(Modifier.height(14.dp))
                 Text("Submitted Recording", fontSize = 14.sp)
                 Spacer(Modifier.height(6.dp))
@@ -104,14 +110,13 @@ fun ImageDescriptionTaskScreen(navController: NavHostController) {
 
             PrimaryButton(
                 text = "Submit",
-                enabled = duration in 10..20
+                enabled = error.isEmpty() && duration in 10..20 && recordedFile != null
             ) {
-                val file = File(context.filesDir, "img_desc")
                 val task = TaskItem(
                     id = System.currentTimeMillis(),
                     taskType = "image_description",
                     imageUrl = imageUrl,
-                    audioPath = file.absolutePath,
+                    audioPath = recordedFile?.absolutePath ?: "",
                     durationSec = duration,
                     timestamp = System.currentTimeMillis().toString()
                 )

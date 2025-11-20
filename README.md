@@ -147,7 +147,13 @@ This repository contains a Kotlin Multiplatform (KMM) + Compose (Android) protot
 
 ---
 
+## Download the app apk by going to our "releases" page
+
+---
+
 ## Build & Run (Android)
+
+
 
 Using Android Studio (recommended):
 - Open the project (`josh/`).

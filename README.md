@@ -52,6 +52,20 @@ This repository contains a Kotlin Multiplatform (KMM) + Compose (Android) protot
 - Permission UX (Accompanist)
   - Clear, card-based UI for requesting microphone/camera permissions.
   - Permanently denied state offers "Open App Settings" fallback.
+ 
+<p float="left">
+  <img alt="image" src="https://github.com/user-attachments/assets/7d9fc22f-95a0-4277-81f4-760ce1f6f062" width="20%"/>
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/9cb8790d-79a7-4e08-b376-e9773a71b653" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/d318a4ab-03ee-4ed3-a960-792e0d6ef81e" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/594e2d17-1613-4cf9-b309-b360bdc428df" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/e44bb6d2-68f1-4b97-a409-8d53a8c52f62" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/a43bd2cb-aeaa-431d-86bd-3b55487d5c9f" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/792de729-4e15-48b3-bd72-272efb537c71" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/cbdfb41e-7f79-4939-a60b-2015daea54cf" />
+  <img width="20%" alt="image" src="https://github.com/user-attachments/assets/a7633a85-48d4-4a24-9c2d-c82c6621a809" />
+
+
+</p>
 
 ---
 
